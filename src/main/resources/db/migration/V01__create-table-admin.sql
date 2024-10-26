@@ -1,0 +1,6 @@
+CREATE TABLE admin (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    senha VARCHAR(100) NOT NULL
+);
