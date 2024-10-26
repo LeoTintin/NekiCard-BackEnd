@@ -1,4 +1,4 @@
-package com.nekicard.domain.model;
+package com.nekicard.domain.DTO;
 
 import java.util.Date;
 

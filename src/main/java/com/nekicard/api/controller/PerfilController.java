@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nekicard.domain.DTO.PerfilRequest;
 import com.nekicard.domain.model.Perfil;
-import com.nekicard.domain.model.PerfilRequest;
 import com.nekicard.repository.PerfilRepository;
 
 import jakarta.persistence.EntityNotFoundException;
