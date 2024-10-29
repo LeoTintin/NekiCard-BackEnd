@@ -14,7 +14,7 @@ import com.nekicard.domain.DTO.AuthResponseDTO;
 import com.nekicard.domain.DTO.AdminDTO;
 import com.nekicard.domain.model.Admin;
 import com.nekicard.repository.AdminRepository;
-import com.nekicard.security.TokenService;
+import com.nekicard.services.TokenService;
 
 import jakarta.validation.Valid;
 
