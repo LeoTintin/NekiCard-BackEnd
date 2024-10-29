@@ -1,8 +1,8 @@
 package com.nekicard.domain.DTO;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public record PerfilDTO(Long id, String email, String nome, String nomeSocial, Date dataNascimento, String foto,
+public record PerfilDTO(Long id, String email, String nome, String nomeSocial, LocalDate dataNascimento, String foto,
 		String telefone, String redeSocial) {
 
 }

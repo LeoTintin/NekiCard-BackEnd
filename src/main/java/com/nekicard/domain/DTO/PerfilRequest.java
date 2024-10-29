@@ -1,6 +1,6 @@
 package com.nekicard.domain.DTO;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,7 +18,7 @@ public class PerfilRequest {
     private String email;
     private String nomeSocial;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
     private String telefone;
     private String redeSocial;
     private MultipartFile arquivo;

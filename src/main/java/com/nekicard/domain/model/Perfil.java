@@ -1,6 +1,6 @@
 package com.nekicard.domain.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.nekicard.domain.DTO.PerfilDTO;
 
@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +27,7 @@ public class Perfil {
 	private String email;
 	private String nome;
 	private String nomeSocial;
-	private Date dataNascimento;
+	private LocalDate dataNascimento;
 	private String foto;
 	private String telefone;
 	private String redeSocial;

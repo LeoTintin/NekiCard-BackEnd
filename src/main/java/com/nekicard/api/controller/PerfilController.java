@@ -81,40 +81,38 @@ public class PerfilController {
 	}
 
 	@PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
-	public ResponseEntity<Perfil> updatePerfil(@PathVariable Long id, @ModelAttribute @Valid PerfilRequest perfilRequest) {
-	    Optional<Perfil> optionalPerfil = perfilRepository.findById(id);
+	public ResponseEntity<Perfil> updatePerfil(@PathVariable Long id,
+			@ModelAttribute @Valid PerfilRequest perfilRequest) {
+		Optional<Perfil> optionalPerfil = perfilRepository.findById(id);
 
-	    if (optionalPerfil.isPresent()) {
-	        Perfil perfil = optionalPerfil.get();
-	        perfil.setNome(perfilRequest.getNome());
-	        perfil.setEmail(perfilRequest.getEmail());
-	        perfil.setNomeSocial(perfilRequest.getNomeSocial());
-	        perfil.setDataNascimento(perfilRequest.getDataNascimento());
-	        perfil.setTelefone(perfilRequest.getTelefone());
-	        perfil.setRedeSocial(perfilRequest.getRedeSocial());
+		if (optionalPerfil.isPresent()) {
+			Perfil perfil = optionalPerfil.get();
+			perfil.setNome(perfilRequest.getNome());
+			perfil.setEmail(perfilRequest.getEmail());
+			perfil.setNomeSocial(perfilRequest.getNomeSocial());
+			perfil.setDataNascimento(perfilRequest.getDataNascimento());
+			perfil.setTelefone(perfilRequest.getTelefone());
+			perfil.setRedeSocial(perfilRequest.getRedeSocial());
 
-	        // Salvar a foto se houver um novo arquivo
-	        try {
-	            MultipartFile arquivo = perfilRequest.getArquivo();
-	            if (arquivo != null && !arquivo.isEmpty()) {
-	                byte[] bytes = arquivo.getBytes();
-	                String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
-	                Path caminho = Paths.get(caminhoImagens + perfil.getId() + "_" + arquivo.getOriginalFilename());
-	                Files.write(caminho, bytes);
+			try {
+				MultipartFile arquivo = perfilRequest.getArquivo();
+				if (arquivo != null && !arquivo.isEmpty()) {
+					byte[] bytes = arquivo.getBytes();
+					String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
+					Path caminho = Paths.get(caminhoImagens + perfil.getId() + "_" + arquivo.getOriginalFilename());
+					Files.write(caminho, bytes);
 
-	                perfil.setFoto(perfil.getId() + "_" + arquivo.getOriginalFilename());
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            // Opcional: tratar o erro de forma adequada, talvez lançando uma exceção customizada
-	        }
+					perfil.setFoto(perfil.getId() + "_" + arquivo.getOriginalFilename());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-	        // Salvar as alterações no perfil
-	        perfilRepository.save(perfil);
-	        return ResponseEntity.ok(perfil);
-	    } else {
-	        throw new EntityNotFoundException();
-	    }
+			perfilRepository.save(perfil);
+			return ResponseEntity.ok(perfil);
+		} else {
+			throw new EntityNotFoundException();
+		}
 	}
 
 }
