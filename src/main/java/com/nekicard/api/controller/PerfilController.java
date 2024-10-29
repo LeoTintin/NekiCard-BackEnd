@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +43,9 @@ public class PerfilController {
 	@GetMapping("/{id}")
 	public ResponseEntity findPerfil(@PathVariable Long id) {
 		var findPerfil = perfilRepository.findById(id);
+		if (findPerfil.isEmpty()) {
+			return ResponseEntity.badRequest().body("Não foi encontrado um perfil com este ID");
+		}
 		return ResponseEntity.ok(findPerfil);
 	}
 
@@ -52,7 +57,28 @@ public class PerfilController {
 	}
 
 	@PostMapping(consumes = { "multipart/form-data" })
-	public ResponseEntity<Perfil> addPerfil(@ModelAttribute @Valid PerfilRequest perfilRequest) {
+	public ResponseEntity<?> addPerfil(@ModelAttribute @Valid PerfilRequest perfilRequest) {
+
+		MultipartFile foto = perfilRequest.getFoto();
+		if (foto == null || foto.isEmpty()) {
+			return ResponseEntity.badRequest().body("Foto não pode ser um campo vazio");
+		}
+
+		String nome = perfilRequest.getNome();
+		if (nome == null || nome.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body("Nome não pode ser um campo vazio");
+		}
+
+		String email = perfilRequest.getEmail();
+		if (email == null || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body("E-mail não pode ser um campo vazio");
+		}
+
+		LocalDate dataNascimento = perfilRequest.getDataNascimento();
+		if (dataNascimento == null) {
+			return ResponseEntity.badRequest().body("Data de Nascimento não pode ser um campo vazio");
+		}
+
 		Perfil newPerfil = new Perfil();
 		newPerfil.setNome(perfilRequest.getNome());
 		newPerfil.setEmail(perfilRequest.getEmail());
@@ -60,30 +86,42 @@ public class PerfilController {
 		newPerfil.setDataNascimento(perfilRequest.getDataNascimento());
 		newPerfil.setTelefone(perfilRequest.getTelefone());
 		newPerfil.setRedeSocial(perfilRequest.getRedeSocial());
-		perfilRepository.save(newPerfil);
 
 		try {
-			MultipartFile arquivo = perfilRequest.getArquivo();
-			if (arquivo != null && !arquivo.isEmpty()) {
-				byte[] bytes = arquivo.getBytes();
-				String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
-				Path caminho = Paths.get(caminhoImagens + newPerfil.getId() + "_" + arquivo.getOriginalFilename());
-				Files.write(caminho, bytes);
 
-				newPerfil.setFoto(newPerfil.getId() + "_" + arquivo.getOriginalFilename());
-				perfilRepository.save(newPerfil);
-			}
+			byte[] bytes = foto.getBytes();
+			String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
+			Path caminho = Paths.get(caminhoImagens + newPerfil.getId() + "_" + foto.getOriginalFilename());
+			Files.write(caminho, bytes);
+
+			newPerfil.setFoto(newPerfil.getId() + "_" + foto.getOriginalFilename());
+
 		} catch (IOException e) {
 			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-
+		perfilRepository.save(newPerfil);
 		return ResponseEntity.ok(newPerfil);
 	}
 
 	@PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
-	public ResponseEntity<Perfil> updatePerfil(@PathVariable Long id,
-			@ModelAttribute @Valid PerfilRequest perfilRequest) {
+	public ResponseEntity<?> updatePerfil(@PathVariable Long id, @ModelAttribute @Valid PerfilRequest perfilRequest) {
 		Optional<Perfil> optionalPerfil = perfilRepository.findById(id);
+
+		String nome = perfilRequest.getNome();
+		if (nome == null || nome.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body("Nome não pode ser um campo vazio");
+		}
+
+		String email = perfilRequest.getEmail();
+		if (email == null || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body("E-mail não pode ser um campo vazio");
+		}
+
+		LocalDate dataNascimento = perfilRequest.getDataNascimento();
+		if (dataNascimento == null) {
+			return ResponseEntity.badRequest().body("Data de Nascimento não pode ser um campo vazio");
+		}
 
 		if (optionalPerfil.isPresent()) {
 			Perfil perfil = optionalPerfil.get();
@@ -95,17 +133,20 @@ public class PerfilController {
 			perfil.setRedeSocial(perfilRequest.getRedeSocial());
 
 			try {
-				MultipartFile arquivo = perfilRequest.getArquivo();
-				if (arquivo != null && !arquivo.isEmpty()) {
-					byte[] bytes = arquivo.getBytes();
+				MultipartFile foto = perfilRequest.getFoto();
+
+				if (foto != null && !foto.isEmpty()) {
+
+					byte[] bytes = foto.getBytes();
 					String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
-					Path caminho = Paths.get(caminhoImagens + perfil.getId() + "_" + arquivo.getOriginalFilename());
+					Path caminho = Paths.get(caminhoImagens + perfil.getId() + "_" + foto.getOriginalFilename());
 					Files.write(caminho, bytes);
 
-					perfil.setFoto(perfil.getId() + "_" + arquivo.getOriginalFilename());
+					perfil.setFoto(perfil.getId() + "_" + foto.getOriginalFilename());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 			}
 
 			perfilRepository.save(perfil);
