@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,15 +26,19 @@ public class Admin implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "Id usuario", required = true)
 	private Long id;
 
 	@Column(nullable = false)
+	@Schema(description = "Nome do usuario", required = true)
 	private String nome;
 
 	@Column(nullable = false, unique = true)
+	@Schema(description = "E-mail do usuario", required = true)
 	private String email;
 
 	@Column(nullable = false)
+	@Schema(description = "Senha do usuario", required = true)
 	private String senha;
 
 	public Admin() {

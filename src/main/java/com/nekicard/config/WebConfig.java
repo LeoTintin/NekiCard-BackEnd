@@ -7,20 +7,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-	
+
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-		.allowedOrigins("http://localhost:5173")
-		.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-		.allowedHeaders("*")
-		.allowCredentials(true);
+		registry.addMapping("/**").allowedOrigins("http://localhost:5173", "http://localhost:8080")
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*").allowCredentials(true);
 	}
-	
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	    registry.addResourceHandler("/imagens/**")
-	            .addResourceLocations("file:///C:/Users/Leo/Downloads/profilePictures/")
-	            .setCachePeriod(3600);
+		registry.addResourceHandler("/imagens/**")
+				.addResourceLocations("file:///C:/Users/Leo/Downloads/profilePictures/").setCachePeriod(3600);
 	}
 }

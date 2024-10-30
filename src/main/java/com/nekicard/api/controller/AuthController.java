@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nekicard.domain.DTO.AuthResponseDTO;
 import com.nekicard.domain.DTO.AdminDTO;
+import com.nekicard.domain.DTO.AuthResponseDTO;
 import com.nekicard.domain.model.Admin;
 import com.nekicard.repository.AdminRepository;
 import com.nekicard.services.TokenService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,6 +32,7 @@ public class AuthController {
 	@Autowired
 	AdminRepository userRepository;
 
+	@Operation(description = "Metodo de login de Admin")
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AdminDTO data) {
 		var userPassword = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
@@ -41,6 +43,7 @@ public class AuthController {
 		return ResponseEntity.ok(new AuthResponseDTO(token));
 	}
 
+	@Operation(description = "Registrando um Admin")
 	@PostMapping("/register")
 	public ResponseEntity register(@RequestBody @Valid AdminDTO data) {
 		if (this.userRepository.findByEmail(data.email()) != null)
