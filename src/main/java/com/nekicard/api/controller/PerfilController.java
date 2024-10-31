@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class PerfilController {
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@GetMapping
-	public ResponseEntity listPerfil() {
+	public ResponseEntity<?> listPerfil() {
 		var allPerfil = perfilRepository.findAll();
 		return ResponseEntity.ok(allPerfil);
 	}
@@ -54,7 +55,7 @@ public class PerfilController {
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@GetMapping("/{id}")
-	public ResponseEntity findPerfil(@PathVariable Long id) {
+	public ResponseEntity<?> findPerfil(@PathVariable Long id) {
 		var findPerfil = perfilRepository.findById(id);
 		if (findPerfil.isEmpty()) {
 			return ResponseEntity.badRequest().body("Não foi encontrado um perfil com este ID");
@@ -68,7 +69,7 @@ public class PerfilController {
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@DeleteMapping("/{id}")
-	public ResponseEntity deletePerfil(@PathVariable Long id) {
+	public ResponseEntity<?> deletePerfil(@PathVariable Long id) {
 		if (!perfilRepository.existsById(id)) {
 			return ((BodyBuilder) ResponseEntity.notFound()).body("Id perfil não encontrado");
 		}
@@ -83,35 +84,35 @@ public class PerfilController {
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@PostMapping(consumes = { "multipart/form-data" })
-	public ResponseEntity<?> addPerfil(@ModelAttribute @Valid PerfilRequest perfilRequest) {
+	public ResponseEntity<?> addPerfil(@ModelAttribute @Valid PerfilRequest perfilRequest) throws BadRequestException {
 
 		MultipartFile foto = perfilRequest.getFoto();
 		if (foto == null || foto.isEmpty()) {
-			return ResponseEntity.badRequest().body("Foto não pode ser um campo vazio");
+			throw new BadRequestException("Foto não pode ser um campo vazio");
 		}
 
 		String nome = perfilRequest.getNome();
 		if (nome == null || nome.trim().isEmpty()) {
-			return ResponseEntity.badRequest().body("Nome não pode ser um campo vazio");
+			throw new BadRequestException("Nome não pode ser um campo vazio");
 		}
 
 		String email = perfilRequest.getEmail();
 		if (email == null || email.trim().isEmpty()) {
-			return ResponseEntity.badRequest().body("E-mail não pode ser um campo vazio");
+			throw new BadRequestException("E-mail não pode ser um campo vazio");
 		}
 
 		if (!email.endsWith("@neki-it.com.br") && !email.endsWith("@neki.com.br")) {
-			return ResponseEntity.badRequest().body("E-mail deve terminar com @neki-it.com.br ou @neki.com.br");
-					
+			throw new BadRequestException("E-mail deve terminar com @neki-it.com.br ou @neki.com.br");
+
 		}
 
-			if (perfilRepository.findByEmail(email).isPresent()) {
-				return ResponseEntity.badRequest().body("Este e-mail já está em uso");
-			}
+		if (perfilRepository.findByEmail(email).isPresent()) {
+			throw new BadRequestException("Este e-mail já esta em uso");
+		}
 
 		LocalDate dataNascimento = perfilRequest.getDataNascimento();
 		if (dataNascimento == null) {
-			return ResponseEntity.badRequest().body("Data de Nascimento não pode ser um campo vazio");
+			throw new BadRequestException("Data de nascimento não pode ser nulo");
 		}
 
 		Perfil newPerfil = new Perfil();
@@ -145,27 +146,28 @@ public class PerfilController {
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@PutMapping(value = "/{id}", consumes = { "multipart/form-data" })
-	public ResponseEntity<?> updatePerfil(@PathVariable Long id, @ModelAttribute @Valid PerfilRequest perfilRequest) {
+	public ResponseEntity<?> updatePerfil(@PathVariable Long id, @ModelAttribute @Valid PerfilRequest perfilRequest)
+			throws BadRequestException {
 		Optional<Perfil> optionalPerfil = perfilRepository.findById(id);
 
 		String nome = perfilRequest.getNome();
 		if (nome == null || nome.trim().isEmpty()) {
-			return ResponseEntity.badRequest().body("Nome não pode ser um campo vazio");
+			throw new BadRequestException("Nome não pode ser um campo vazio");
 		}
 
 		String email = perfilRequest.getEmail();
 		if (email == null || email.trim().isEmpty()) {
-			return ResponseEntity.badRequest().body("E-mail não pode ser um campo vazio");
+			throw new BadRequestException("E-mail não pode ser um campo vazio");
 		}
-		
+
 		if (!email.endsWith("@neki-it.com.br") && !email.endsWith("@neki.com.br")) {
-			return ResponseEntity.badRequest().body("E-mail deve terminar com @neki-it.com.br ou @neki.com.br");
-					
+			throw new BadRequestException("E-mail deve terminar com @neki-it.com.br ou @neki.com.br");
+
 		}
 
 		LocalDate dataNascimento = perfilRequest.getDataNascimento();
 		if (dataNascimento == null) {
-			return ResponseEntity.badRequest().body("Data de Nascimento não pode ser um campo vazio");
+			throw new BadRequestException("Data de Nascimento não pode ser um campo vazio");
 		}
 
 		if (optionalPerfil.isPresent()) {

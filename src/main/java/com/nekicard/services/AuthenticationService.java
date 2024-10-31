@@ -6,18 +6,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.nekicard.domain.model.Admin;
-import com.nekicard.repository.AdminRepository;
+import com.nekicard.domain.model.User;
+import com.nekicard.repository.UserRepository;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
 
     @Autowired
-    AdminRepository userRepository;
+    UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin user = userRepository.findByEmail(username);
+        User user = userRepository.findByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException("Usuário não encontrado com o email: " + username);
         }

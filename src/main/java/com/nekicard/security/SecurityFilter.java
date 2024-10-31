@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.nekicard.repository.AdminRepository;
+import com.nekicard.repository.UserRepository;
 import com.nekicard.services.TokenService;
 
 import jakarta.servlet.FilterChain;
@@ -24,7 +24,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 	TokenService tokenService;
 
 	@Autowired
-	AdminRepository usuarioRepository;
+	UserRepository usuarioRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
