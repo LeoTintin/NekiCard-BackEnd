@@ -21,9 +21,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.nekicard.domain.DTO.PerfilRequest;
 import com.nekicard.domain.model.Perfil;
+import com.nekicard.exception.ConflictException;
 import com.nekicard.repository.PerfilRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +83,7 @@ public class PerfilController {
 	@Operation(description = "Regristra um novo perfil")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Perfil registrado com sucesso"),
 			@ApiResponse(responseCode = "400", description = "Erro na validação dos campos"),
+			@ApiResponse(responseCode = "409", description = "E-mail já está em uso!"),
 			@ApiResponse(responseCode = "403", description = "Usuario não indentificado"),
 			@ApiResponse(responseCode = "500", description = "Erro no servidor") })
 	@PostMapping(consumes = { "multipart/form-data" })
@@ -107,7 +110,7 @@ public class PerfilController {
 		}
 
 		if (perfilRepository.findByEmail(email).isPresent()) {
-			throw new BadRequestException("Este e-mail já esta em uso");
+			throw new ConflictException("Este e-mail já está em uso");
 		}
 
 		LocalDate dataNascimento = perfilRequest.getDataNascimento();
@@ -126,7 +129,7 @@ public class PerfilController {
 		try {
 
 			byte[] bytes = foto.getBytes();
-			String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
+			String caminhoImagens = "C:\\ImagensPerfil\\";
 			Path caminho = Paths.get(caminhoImagens + newPerfil.getId() + "_" + foto.getOriginalFilename());
 			Files.write(caminho, bytes);
 
@@ -185,7 +188,7 @@ public class PerfilController {
 				if (foto != null && !foto.isEmpty()) {
 
 					byte[] bytes = foto.getBytes();
-					String caminhoImagens = "C:\\Users\\Leo\\Downloads\\profilePictures\\";
+					String caminhoImagens = "C:\\ImagensPerfil\\";
 					Path caminho = Paths.get(caminhoImagens + perfil.getId() + "_" + foto.getOriginalFilename());
 					Files.write(caminho, bytes);
 
