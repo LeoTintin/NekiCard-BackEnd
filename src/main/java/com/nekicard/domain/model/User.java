@@ -1,11 +1,11 @@
 package com.nekicard.domain.model;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,29 +17,33 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "admin")
+@Table(name = "usuario")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public class Admin implements UserDetails {
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "Id usuario", required = true)
 	private Long id;
 
 	@Column(nullable = false)
+	@Schema(description = "Nome do usuario", required = true)
 	private String nome;
 
 	@Column(nullable = false, unique = true)
+	@Schema(description = "E-mail do usuario", required = true)
 	private String email;
 
 	@Column(nullable = false)
+	@Schema(description = "Senha do usuario", required = true)
 	private String senha;
 
-	public Admin() {
+	public User() {
 	}
 
-	public Admin(String nome, String email, String senha) {
+	public User(String nome, String email, String senha) {
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
